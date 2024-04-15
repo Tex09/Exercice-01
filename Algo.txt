@@ -1,0 +1,56 @@
+Fonction evaluer_expression(expression, variables)
+    valeurs_verite <- liste vide
+    Pour chaque combinaison dans produit_cartesien([Faux, Vrai], longueur(variables))
+        valeurs <- dictionnaire(zip(variables, combinaison))
+        valeur <- evaluer(expression, valeurs)
+        ajouter (combinaison, valeur) à valeurs_verite
+    Retourner valeurs_verite
+
+Fonction afficher_table_verite(expression, variables)
+    valeurs_verite <- evaluer_expression(expression, variables)
+    Afficher "Table de vérité pour l'expression :", expression
+    Afficher '-' * (longueur(expression) + 18)
+    Pour chaque var dans variables
+        Afficher "|", var, " ", fin=''
+    Afficher "| Résultat |"
+    Afficher '-' * (longueur(expression) + 18)
+    Pour chaque combinaison, valeur dans valeurs_verite
+        Pour chaque val dans combinaison
+            Afficher "|", entier(val), " ", fin=''
+        Afficher "|", entier(valeur).centrer(longueur(expression) + 10), "|"
+    Afficher '-' * (longueur(expression) + 18)
+
+Fonction calculer_formes_canoniques(expression, variables)
+    formes_canoniques <- liste vide
+    valeurs_verite <- evaluer_expression(expression, variables)
+    Pour chaque combinaison, valeur dans valeurs_verite
+        Si valeur alors
+            termes <- liste vide
+            Pour chaque var, val dans zip(variables, combinaison)
+                Si non val alors
+                    ajouter "(var et non val)" à termes
+                Sinon
+                    ajouter "(var et val)" à termes
+            ajouter " or ".joindre(termes) à formes_canoniques
+        Sinon
+            termes <- liste vide
+            Pour chaque var, val dans zip(variables, combinaison)
+                Si val alors
+                    ajouter "(var et val)" à termes
+                Sinon
+                    ajouter "(var et non val)" à termes
+            ajouter " and ".joindre(termes) à formes_canoniques
+    Retourner formes_canoniques
+
+expression <- demander_utilisateur("Entrez l'expression logique (utilisez les opérateurs logiques Python): ")
+variables <- demander_utilisateur("Entrez les variables séparées par des espaces: ").diviser()
+
+afficher_table_verite(expression, variables)
+
+formes_canoniques <- calculer_formes_canoniques(expression, variables)
+Afficher "\nForme canonique (première forme):"
+Afficher " or ".joindre(formes_canoniques)
+
+renverser(formes_canoniques)
+Afficher "\nForme canonique (deuxième forme):"
+Afficher " and ".joindre(formes_canoniques)
